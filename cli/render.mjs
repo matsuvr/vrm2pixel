@@ -7,6 +7,13 @@ const DIST_DIRECTORY = fileURLToPath(new URL("../dist/", import.meta.url));
 const RENDER_ORIGIN = "https://vrm-render.invalid";
 const CHUNK_BYTES = 192 * 1024;
 const CONTENT_SECURITY_POLICY = "default-src 'none'; script-src 'self'; img-src blob: data:; connect-src 'none'; base-uri 'none'";
+// Select the CPU-backed ANGLE driver explicitly: headless Windows hosts may
+// expose an unusable GPU instead of falling back automatically.
+// https://chromium.googlesource.com/chromium/src/+/HEAD/docs/gpu/swiftshader.md
+export const HEADLESS_BROWSER_ARGS = Object.freeze([
+  "--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader",
+  "--disable-background-networking", "--disable-component-update",
+]);
 
 export async function findBrowser(explicitPath) {
   const configured = explicitPath ?? process.env.VRM_PIXEL_BROWSER_PATH;
@@ -74,8 +81,7 @@ export async function renderPng(bytes, { browser: browserPath, timeoutMs = 120_0
     browser: "chrome",
     headless: true,
     // A private, temporary browser profile is created and removed by Puppeteer.
-    // SwiftShader also allows WebGL on Windows machines without a usable GPU.
-    args: ["--enable-unsafe-swiftshader", "--disable-background-networking", "--disable-component-update"],
+    args: [...HEADLESS_BROWSER_ARGS],
     timeout: Math.min(timeoutMs, 30_000),
     protocolTimeout: timeoutMs,
   }).catch((error) => {

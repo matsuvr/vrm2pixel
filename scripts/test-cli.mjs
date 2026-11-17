@@ -7,12 +7,28 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createCanvas, loadImage } from "@napi-rs/canvas";
 import puppeteer from "puppeteer-core";
-import { findBrowser } from "../cli/render.mjs";
+import { findBrowser, HEADLESS_BROWSER_ARGS } from "../cli/render.mjs";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const entry = path.join(root, "cli", "index.mjs");
 await mkdir(path.join(root, "test-results"), { recursive: true });
 const directory = await mkdtemp(path.join(root, "test-results", "cli-日本語 path-"));
+
+// Report browser/driver availability separately from model validation failures.
+const probe = await puppeteer.launch({ executablePath: await findBrowser(), headless: true, args: [...HEADLESS_BROWSER_ARGS] });
+try {
+  const page = await probe.newPage();
+  const graphics = await page.evaluate(() => {
+    const gl = document.createElement("canvas").getContext("webgl2");
+    if (!gl) return null;
+    const info = gl.getExtension("WEBGL_debug_renderer_info");
+    return { version: gl.getParameter(gl.VERSION), renderer: info ? gl.getParameter(info.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER) };
+  });
+  console.log(`Browser: ${await probe.version()}; WebGL: ${JSON.stringify(graphics)}`);
+  assert.ok(graphics, "Headless Chrome must provide WebGL 2 for integration tests.");
+} finally {
+  await probe.close();
+}
 
 async function run(args, expectedStatus = 0) {
   const child = spawn(process.execPath, [entry, ...args], { cwd: directory, windowsHide: true });
@@ -120,7 +136,7 @@ server.listen(0, "127.0.0.1");
 await once(server, "listening");
 let browser;
 try {
-  browser = await puppeteer.launch({ executablePath: await findBrowser(), headless: true, args: ["--enable-unsafe-swiftshader"] });
+  browser = await puppeteer.launch({ executablePath: await findBrowser(), headless: true, args: [...HEADLESS_BROWSER_ARGS] });
   const page = await browser.newPage();
   const origin = `http://127.0.0.1:${server.address().port}`;
   await page.setRequestInterception(true);

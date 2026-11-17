@@ -72,6 +72,8 @@ VRMと同じフォルダーに`avatar-spritesheet.png`を保存し、標準出�
 
 自動検出できない場合は`--browser "C:\path\to\chrome.exe"`または環境変数`VRM_PIXEL_BROWSER_PATH`でブラウザを指定します。Chrome／Edgeは専用の一時プロファイルと非表示のウィンドウで起動し、処理完了・エラー・タイムアウトで終了します。普段使うブラウザのプロファイルは使用しません。
 
+CLIのヘッドレス描画では [SwiftShader](https://chromium.googlesource.com/chromium/src/+/HEAD/docs/gpu/swiftshader.md) を明示的に選択し、GPUを持たない環境でもCPUでWebGL 2を実行します。
+
 CLIの入力はVRM 0.x／1.0のバイナリ形式、25MiB以下です。テクスチャはVRM内に埋め込んでください。APIと同じ描画ページをローカルのビルド済みファイルから読み込み、モデルからの外部URLへのアクセスを遮断します。HTTPサーバーの起動やAPIキーは不要で、依存関係とブラウザの準備後はオフラインで変換できます。終了コードは成功時`0`、失敗時`1`で、エラーは標準エラー出力に表示します。CLIの出力は全コマPNGです。個別PNG・歩き／走りPNG・ZIPと設定の調整はWeb UIから利用できます。
 
 ### 共通エンジンの更新
