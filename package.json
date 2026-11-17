@@ -1,0 +1,54 @@
+{
+  "name": "vrm-pixel-studio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "VRM to pixel sprite sheets with a shared engine for Web UI, Web API and Windows CLI.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/matsuvr/vrm2pixel.git"
+  },
+  "homepage": "https://vrm2pixel.catkawaii.com",
+  "bugs": {
+    "url": "https://github.com/matsuvr/vrm2pixel/issues"
+  },
+  "bin": {
+    "vrm-pixel": "cli/index.mjs"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "cli": "node cli/index.mjs",
+    "check": "tsc --noEmit && tsc --project tsconfig.worker.json",
+    "test": "node --import tsx --test tests/*.test.ts tests/*.test.mjs",
+    "test:api": "node scripts/test-api.mjs",
+    "test:cli": "npm run build && node scripts/test-cli.mjs",
+    "build": "npm run check && npm run licenses:build && vite build",
+    "licenses:build": "node scripts/build-licenses.mjs",
+    "preview": "vite preview --host 0.0.0.0",
+    "worker:dev": "npm run build && wrangler dev",
+    "deploy": "npm run build && npm run deploy:built",
+    "deploy:built": "wrangler deploy --config wrangler.production.jsonc",
+    "demo:build": "node scripts/create-demo.mjs",
+    "types:worker": "wrangler types"
+  },
+  "dependencies": {
+    "@cloudflare/puppeteer": "2.0.0",
+    "@pixiv/three-vrm": "3.5.5",
+    "fflate": "0.8.3",
+    "puppeteer-core": "25.18.0",
+    "three": "0.187.0"
+  },
+  "devDependencies": {
+    "@napi-rs/canvas": "1.1.1",
+    "@types/node": "^24.0.0",
+    "@types/three": "^0.183.0",
+    "tsx": "^4.20.6",
+    "typescript": "5.9.3",
+    "vite": "8.3.8",
+    "wrangler": "4.164.0"
+  },
+  "license": "MIT"
+}

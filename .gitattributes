@@ -1,0 +1,6 @@
+* text=auto eol=lf
+*.cmd text eol=crlf
+*.vrm binary
+*.png binary
+*.zip binary
+worker-configuration.d.ts linguist-generated=true -whitespace

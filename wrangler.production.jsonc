@@ -1,0 +1,23 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  // Production deploys use this complete configuration. Keep shared settings
+  // aligned with wrangler.jsonc, which is portable for local use and forks.
+  "name": "vrm-pixel-studio",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-11-17",
+  "compatibility_flags": ["nodejs_compat"],
+  "browser": { "binding": "BROWSER" },
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api", "/api/*"],
+  },
+  "routes": [
+    { "pattern": "vrm2pixel.catkawaii.com", "custom_domain": true },
+  ],
+  "observability": {
+    "enabled": true,
+    "logs": { "enabled": true },
+    "traces": { "enabled": true, "head_sampling_rate": 0.01 },
+  },
+}

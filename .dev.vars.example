@@ -1,0 +1,4 @@
+# Local API authentication only. Replace with a randomly generated secret.
+# Generate one: node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"
+# The Web UI and CLI work without an API key.
+API_KEY=
